@@ -62,3 +62,17 @@ def generateCipherKey(passcode = ''):
         alphabet = alphabet[:pos] + alphabet[(pos+1):]
 
     return key
+
+def transposeEvenOdd(S):
+    """Transcode the input string S by splitting it into 2 substrings by even/odd indices and concatenating them"""
+    even = ''
+    odd = ''
+
+    for i in range(len(S)):
+        if i % 2 == 0:
+            even += S[i]
+        else:
+            odd += S[i]
+
+    result = even + odd
+    return result
