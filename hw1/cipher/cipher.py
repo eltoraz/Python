@@ -82,7 +82,7 @@ def untransposeEvenOdd(S):
     """Decrypts a string encrypted by concatenating the subtring formed from its odd-indexed characters to that
     from its even-indexed characters"""
     even = S[:(math.ceil(len(S)/2))]    # divide the input string, deciding the index to split at based on its length
-    odd = S[(math.ceil(len(S)/2)):]
+    odd = S[(math.ceil(len(S)/2)):]     # note: the length of the even substr will always be equal to or 1 greater than the odd
     
     result = ''
     for i in range(len(S)):
@@ -90,5 +90,20 @@ def untransposeEvenOdd(S):
             result += even[i//2]
         else:
             result += odd[i//2]
+
+    return result
+
+def transpose(S, n = 2):
+    """Transcode the input string S by splitting it into n substrings based on (index % n) and then concatenating them"""
+    substrings = []                     # list of substrings
+    for i in range(n):
+        substrings.append('')
+
+    for i in range(len(S)):             # separate the characters into substrings based on their index modulo the number of substrings to use
+        substrings[i%n] += S[i]
+
+    result = ''                         # concatenate the substrings together to form the cipher
+    for i in range(n):
+        result += substrings[i]
 
     return result
