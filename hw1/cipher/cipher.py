@@ -6,6 +6,7 @@ Description: Encrypts and decrypts alphanumeric strings using two different ciph
 """
 
 import random
+import math
 
 def subCipherEncrypt(S, key):
     """Encrypts string S using a substitution cipher based on key"""
@@ -75,4 +76,19 @@ def transposeEvenOdd(S):
             odd += S[i]
 
     result = even + odd
+    return result
+
+def untransposeEvenOdd(S):
+    """Decrypts a string encrypted by concatenating the subtring formed from its odd-indexed characters to that
+    from its even-indexed characters"""
+    even = S[:(math.ceil(len(S)/2))]    # divide the input string, deciding the index to split at based on its length
+    odd = S[(math.ceil(len(S)/2)):]
+    
+    result = ''
+    for i in range(len(S)):
+        if i % 2 == 0:
+            result += even[i//2]
+        else:
+            result += odd[i//2]
+
     return result
