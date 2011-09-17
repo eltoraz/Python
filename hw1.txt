@@ -1,0 +1,67 @@
+Our first homework assignment is to be completed individually. Do not share code or review anyone else's code. Work on this homework assignment is to be your own.
+Submit your homework via RPI LMS. Put all your code into exactly one Python file and name it your RCS userid. For example, if your RCS userid is goldsd3, then your Python file name for this assignment must be goldsd3.py.
+Be sure to comment your code and include your name at the top of each file submitted.
+Substitution Ciphers:
+Write a Python function called subCipherEncrypt() that, given an input string S (first argument) and a 26-character string key (second argument), generates cipher text by replacing letters in S with the "mapped" character in key.
+Note that this should work for both uppercase and lowercase letters. In other words, keep the case the same through the mapping.
+As an example, given that the input string is "The quick brown fox" and the key is "qwertyuiopasdfghjklzxcvbnm"; the "T" is mapped to "Z" and "h" is mapped to "i" and so on, as shown below:
+        abcdefghijklmnopqrstuvwxyz
+   key: qwertyuiopasdfghjklzxcvbnm
+
+ input: The quick brown fox
+output: Zit jxoea wkgvf ygb
+Next, write a Python function called subCipherDecrypt() that decrypts strings encoded using the method above. Therefore, given input "Zit jxoea wkgvf ygb" and the key "qwertyuiopasdfghjklzxcvbnm," the output is "The quick brown fox."
+Also write a Python function called generateCipherKey() that generates a random sequence of lowercase letters. This function optionally takes an input string called passcode; if specified, the function generates a key using the deduplicated passcode followed by the remaining lowercase letters. As an example, if the passcode is "CheckItOut," the key is "chekitouabdfgjlmnpqrsvwxyz"; here's the same example:
+             passcode: CheckItOut
+deduplicated passcode: chekitou
+    remaining letters: abdfghlmnpqrsvwxyz
+                  key: chekitouabdfgjlmnpqrsvwxyz
+Transposition Ciphers:
+Write a Python function called transposeEvenOdd() that, given an input string S, generates cipher text by performing the following two-step algorithm: (1) separate S into two substrings, one that contains even-indexed characters, the other that contains odd-indexed characters; (2) concatenate the two substrings from step (1) in even-odd order.
+As an example, given that the input string is "The quick brown fox"; the even-indexed substring is "Teqikbonfx" and the odd-indexed substring is "h uc rw o"; concatenating these two substrings together produces the output (encrypted) string ("Teqikbonfxh uc rw o"). Here's the same example:
+ input: The quick brown fox
+  even: T e q i k b o n f x
+   odd:  h _ u c _ r w _ o    (the '_' characters are spaces)
+output: Teqikbonfxh uc rw o
+Next, write a Python function called untransposeEvenOdd() that decrypts strings encoded using the method above. Therefore, given input "Teqikbonfxh uc rw o," the output is "The quick brown fox."
+Finally, write a more generic transpose() and untranspose() functions that include a second (optional!) argument that specifies the number of substrings to use during encryption. If the given number is 2, this corresponds to the transposeEvenOdd() and untransposeEvenOdd() functions. If the given number is 3, create three substrings that each contain every third character. And so on.
+Frequency Analysis:
+Write a Python function called letterFrequency() that, given an input string, calculates the frequency of each letter (converted to lowercase) in relation to the total number of letters encountered. As an example, given the (small) string "the quick brown fox" with sixteen letters, the function displays the following:
+total letters: 16
+a: 0
+b: 0.0625
+c: 0.0625
+d: 0
+e: 0.0625
+f: 0.0625
+g: 0
+h: 0.0625
+i: 0.0625
+j: 0
+k: 0.0625
+l: 0
+m: 0
+n: 0.0625
+o: 0.125
+p: 0
+q: 0.0625
+r: 0.0625
+s: 0
+t: 0.0625
+u: 0.0625
+v: 0
+w: 0.0625
+x: 0.0625
+y: 0
+z: 0
+Next, write a Python function called wordFrequency() that, given an input string, calculates the frequency of each word (converted to lowercase) in relation to the total number of words encountered. A word is defined as any consecutive sequence of letters, so any non-letter serves as a delimiter. As an example, given the (small) string "The brown fox jumps over the dog,gone!gone888gone," the function displays the following:
+total words: 10
+the: 0.2
+brown: 0.1
+fox: 0.1
+jumps: 0.1
+over: 0.1
+dog: 0.1
+gone: 0.3
+Testing:
+Test all of your functions carefully. Be sure your functions work for a wide variety of inputs (including empty strings). Find lots of text to test your functions with at http://www.gutenberg.org and http://www.bartleby.com.
