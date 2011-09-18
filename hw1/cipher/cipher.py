@@ -10,9 +10,14 @@ import math
 
 def subCipherEncrypt(S, key):
     """Encrypts string S using a substitution cipher based on key"""
+    # verify validity of key
     if not len(key) == 26:
-        print("Substitution key must be exactly 26 characters")
-        exit()
+        print("Error: Substitution key must be exactly 26 characters")
+        return -1
+    for i in range(26):
+        if key.find(chr(i+97)) == -1:
+            print("Error: Substitution key must contain all 26 letters in lowercase. Missing: " + chr(i+97))
+            return -2
 
     cipher = ''
 
@@ -20,7 +25,7 @@ def subCipherEncrypt(S, key):
         if not char.isalpha():      # don't change non-alpha characters
             cipher += char
         else:
-            if char.isupper():
+            if char.isupper():      # insert the corresponding key character
                 cipher += key[ord(char)-65].upper()
             else:
                 cipher += key[ord(char)-97]
@@ -29,9 +34,14 @@ def subCipherEncrypt(S, key):
 
 def subCipherDecrypt(S, key):
     """Decrypts string S using the substitution cipher provided in key"""
+    # verify validity of key
     if not len(key) == 26:
-        print("Substitution key must be exactly 26 characters")
-        exit()
+        print("Error: Substitution key must be exactly 26 characters")
+        return -1
+    for i in range(26):
+        if key.find(chr(i+97)) == -1:
+            print("Error: Substitution key must contain all 26 letters in lowercase. Missing: " + chr(i+97))
+            return -2
 
     message = ''
 
@@ -143,4 +153,7 @@ def letterFrequency(S):
     # print out the letters and their frequency relative to the other letters
     print('total letters: ' + str(count))
     for i in range(len(letters)):
-        print(chr(i+97) + ': ' + str(letters[chr(i+97)] / count))
+        if count == 0:
+            print(chr(i+97) + ': 0.0')
+        else:
+            print(chr(i+97) + ': ' + str(letters[chr(i+97)] / count))
