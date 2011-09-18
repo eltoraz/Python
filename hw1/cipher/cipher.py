@@ -109,7 +109,7 @@ def transpose(S, n = 2):
     return result
 
 def untranspose(S, n = 2):
-    """Decrypts a transposition cipher S by splitting it up into n substrings and interleave them"""
+    """Decrypt a transposition cipher S by splitting it up into n substrings and interleave them"""
     remainder = len(S) % n              # number of substrings that have an extra element (for ciphers where len(S) is not a multiple of n)
     code = S                            # scratch copy of cipher
     substrings = []
@@ -126,3 +126,21 @@ def untranspose(S, n = 2):
         substrings[i%n] = substrings[i%n][1:]
 
     return result
+
+def letterFrequency(S):
+    """Calculate the frequency of each letter (case insensitive) that appears in input string S"""
+    count = 0                           # tally of number of letters encountered
+    letters = {}                        # dictionary matching individual letters to their tallies
+
+    for i in range(26):                 # initialize all entries in the dictionary to 0
+        letters[chr(i+97)] = 0
+
+    for char in S:                      # examine each character, but only count the letters (disregarding case)
+        if char.isalpha():
+            letters[char.lower()] += 1
+            count += 1
+
+    # print out the letters and their frequency relative to the other letters
+    print('total letters: ' + str(count))
+    for i in range(len(letters)):
+        print(chr(i+97) + ': ' + str(letters[chr(i+97)] / count))
