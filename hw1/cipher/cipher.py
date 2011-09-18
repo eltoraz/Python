@@ -151,9 +151,42 @@ def letterFrequency(S):
             count += 1
 
     # print out the letters and their frequency relative to the other letters
-    print('total letters: ' + str(count))
+    print("total letters: " + str(count))
     for i in range(len(letters)):
         if count == 0:
-            print(chr(i+97) + ': 0.0')
+            print(chr(i+97) + ": 0.0")
         else:
-            print(chr(i+97) + ': ' + str(letters[chr(i+97)] / count))
+            print(chr(i+97) + ": " + str(letters[chr(i+97)] / count))
+
+def wordFrequency(S):
+    """Calculate the frequency of each word (case insensitive, deliminated by any non-alphabetic character) in S"""
+    count = 0                           # number of words encountered
+    words = {}
+    w = ''
+
+    for char in S:                      # build each word character-by-character
+        if char.isalpha():
+            w += char.lower()
+        else:                           # if not an alphabetic character, tally the word (or skip if multiple sequential non-alpha characters)
+            if not w == '':             # note: does not catch contractions and hyphenated words
+                count += 1
+                if w in words:
+                    words[w] += 1
+                else:
+                    words[w] = 1
+                w = ''
+    if not w == '':                     # catch words at the very end of the input strings
+        count += 1
+        if w in words:
+            words[w] += 1
+        else:
+            words[w] = 1
+        w = ''
+
+    # print out the words and their relative frequencies
+    print("total words: " + str(count))
+    for (key, value) in words.items():
+        if count == 0:
+            print(key + ": 0.0")
+        else:
+            print(key + ": " + str(value/count))
