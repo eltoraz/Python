@@ -110,13 +110,19 @@ def transpose(S, n = 2):
 
 def untranspose(S, n = 2):
     """Decrypts a transposition cipher S by splitting it up into n substrings and interleave them"""
+    remainder = len(S) % n              # number of substrings that have an extra element (for ciphers where len(S) is not a multiple of n)
+    code = S                            # scratch copy of cipher
     substrings = []
-    for i in range(n):
-        substrings.append(code)         # TODO
+    m = n
+
+    for i in range(m):                  # separate the substrings
+        substrings.append(code[:math.ceil(len(code)/m)])
+        code = code[math.ceil(len(code)/m):]
+        m -= 1
 
     result = ''
-    for i in range(len(S)):             # reconstruct the original string
-        print(str(i) + ' ' + str(i%n) + ' ' + str(i//n))
-        result += substrings[i%n][i//n]
+    for i in range(len(S)):             # decrypt the cipher by interleaving the substrings
+        result += substrings[i%n][0]
+        substrings[i%n] = substrings[i%n][1:]
 
     return result
