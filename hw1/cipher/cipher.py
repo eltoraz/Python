@@ -10,7 +10,7 @@ import math
 
 def subCipherEncrypt(S, key):
     """Encrypts string S using a substitution cipher based on key"""
-    # verify validity of key
+    # verify validity of key, both length and contents (i.e., all 26 letters)
     if not len(key) == 26:
         print("Error: Substitution key must be exactly 26 characters")
         return -1
@@ -34,7 +34,7 @@ def subCipherEncrypt(S, key):
 
 def subCipherDecrypt(S, key):
     """Decrypts string S using the substitution cipher provided in key"""
-    # verify validity of key
+    # verify validity of key, both length and contents (i.e., all 26 letters)
     if not len(key) == 26:
         print("Error: Substitution key must be exactly 26 characters")
         return -1

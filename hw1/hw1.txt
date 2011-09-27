@@ -1,3 +1,22 @@
+CLARIFICATIONS:
+-- For the transpose() and untranspose() functions, if the optional
+   second argument (e.g. 2) is not included, default this value to 2
+
+-- The following functions must NOT display any output whatsoever
+   (and note that each function returns EXACTLY one string):
+     subCipherEncrypt()
+     subCipherDecrypt()
+     generateCipherKey()
+     transposeEvenOdd()
+     untransposeEvenOdd()
+     transpose()
+     untranspose()
+
+-- The following functions are display functions and must NOT return
+   any values back to the caller:
+     letterFrequency()
+     wordFrequency()
+
 Our first homework assignment is to be completed individually. Do not share code or review anyone else's code. Work on this homework assignment is to be your own.
 Submit your homework via RPI LMS. Put all your code into exactly one Python file and name it your RCS userid. For example, if your RCS userid is goldsd3, then your Python file name for this assignment must be goldsd3.py.
 Be sure to comment your code and include your name at the top of each file submitted.
