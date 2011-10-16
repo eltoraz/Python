@@ -67,10 +67,15 @@ def generateCipherKey(passcode = ''):
             pos = alphabet.find(char.lower())
             alphabet = alphabet[:pos] + alphabet[(pos+1):]
 
-    for i in range(len(alphabet)):  # randomize the order of the remaining letters
-        pos = random.randrange(len(alphabet))
-        key += alphabet[pos]
-        alphabet = alphabet[:pos] + alphabet[(pos+1):]
+    # Original submission: for a non-empty passcode, the remaining characters were randomized
+    # Resubmission:        if a passcode is specified, the remaining characters are added in order
+    if not passcode == '':
+        key += alphabet
+    else:
+        for i in range(len(alphabet)):  # randomize the order of the remaining letters
+            pos = random.randrange(len(alphabet))
+            key += alphabet[pos]
+            alphabet = alphabet[:pos] + alphabet[(pos+1):]
 
     return key
 
