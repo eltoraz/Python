@@ -4,3 +4,6 @@
 *.suo
 *.pyproj
 
+# LMS submission files
+jamesw2.py
+
