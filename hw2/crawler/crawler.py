@@ -7,6 +7,7 @@ Description:    Provides functions to:
                     - analyze & format the stats collected by the site crawler
 """
 import re
+from time import sleep
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
@@ -89,7 +90,7 @@ def crawlURL(URL):
        - the number of bytes retrieved (-1 if an error is encountered)
        - a list of tuples containing the links harvested and their corresponding link text
        - a dictionary containing all the unique words encountered and their word counts
-       On error, return -1, [], {}"""
+       On error, return -1, [], {}."""
     req = Request(URL)
     try:
         resp = urlopen(req)
@@ -111,8 +112,43 @@ def crawlURL(URL):
         return bytes, links, words
 
 def crawlSite(rootURL):
-    # List of whistelisted MIME types to recursively crawl (only parse text-based ones)
-    mimeTypes = ['text/html']
+    """Crawl an entire website from rootURL, parsing out links and words.
+       Return 3 values:
+       - the number of bytes retrieved (-1 if an error is encountered)
+       - a list of tuples containing the links harvested and their corresponding link text
+       - a dictionary containing all the unique words encountered and their word counts
+       On rootURL error, return -1, [], {}.
+       Ignore subpage errors."""
+    # Politeness policy: sleep for 3 seconds between connections.
+    sleepTime = 3
+    crawledLinks = []
+
+    bytes = 0
+    links = []
+    words = {}
+
+    # Crawl the root URL to get the initial set of links to work off of
+    newBytes, newLinks, newWords = crawlURL(rootURL)
+    if bytes == -1:
+        return newBytes, newLinks, newWords
+    bytes = newBytes
+    links = newLinks
+    words = newWords
+    
+    # Crawl newly-returned URLs, making sure to keep track of which have been processed.
+    for l in links:
+        sleep(sleepTime)
+        URL = l[0]
+        if URL not in crawledLinks:
+            crawledLinks.append(URL)
+            newBytes, newLinks, newWords = crawlURL(URL)
+            if newBytes >= 0:
+                bytes += newBytes
+                links.extend(newLinks)
+                for w in newWords:
+                    words[w] = words.get(w, 0) + newWords[w]
+
+    return bytes, links, words
 
 def analyzeStats(bytes, URLs, words):
     print("")
