@@ -23,6 +23,7 @@ def expandURL(URL, topLevel):
             r1 = topLevel[:len(topLevel)-1]
         elif re.search('\.php$|\.html$|\.htm$', topLevel):
             # If the top level domain ends with a filename, remove it.
+            # This is only really useful when crawling a site with relative links.
             s = topLevel.split('/')
             r1 = re.sub('/'+s[len(s)-1]+'$', '', topLevel)
 
@@ -141,20 +142,57 @@ def crawlSite(rootURL):
     crawledLinks.append(rootURL)
     
     # Crawl newly-returned URLs, making sure to keep track of which have been processed.
+    # NOTE: this crawls links from linked pages too! It will not leave the domain/subdomain
+    #        specified by rootURL, though.
     for l in links:
         URL = l[0]
         if URL not in crawledLinks:
             sleep(sleepTime)
-            print('crawling ' + URL)
+            # print('crawling ' + URL)
             crawledLinks.append(URL)
             newBytes, newLinks, newWords = crawlURL(URL)
             if newBytes >= 0:
                 bytes += newBytes
                 links.extend(newLinks)
-                for w in newWords:
+                for w in newWords.keys():
                     words[w] = words.get(w, 0) + newWords[w]
 
     return bytes, links, words
 
 def analyzeStats(bytes, URLs, words):
-    print("")
+    """Display a formatted list of links harvested and their link text, and words and their counts.
+       Inputs:
+       - Bytes (unused)
+       - URLs is a list of tuples of (link, link text)
+       - words is a dictionary mapping words to integers (word counts)"""
+    # Calculate some stats and print some general information of the results.
+    uniqueLinkCount = len(set([link[0] for link in URLs]))
+    print('total pages crawled successfully: ' + str(uniqueLinkCount))
+    totalWords = 0
+    for w in words.keys():
+        totalWords += words[w]
+    print('total words: ' + str(totalWords))
+
+    # Print out the list of URLs and link text (duplicate URLs are allowed but not duplicate
+    #  URL/link-text pairs)
+    print('\nURLs and Link-Text:')
+    print('-------------------')
+    deduplicatedURLs = sorted(list(set(URLs)))
+    maxURLLength = 0
+    for l in deduplicatedURLs:
+        if len(l[0]) > maxURLLength:
+            maxURLLength = len(l[0])
+    for l in deduplicatedURLs:
+        print(l[0] + (maxURLLength-len(l[0]))*' ' + '  ==>  \'' + l[1] + '\'')
+
+    # Print out words and word counts, in descending order of word counts
+    # NOTE: for large sites this list will grow very long!
+    temp = 'Word Counts (total of ' + str(totalWords) +  ' words):'
+    print('\n' + temp)
+    print(len(temp)*'-')
+    maxWordLength = 0
+    for w in words.keys():
+        if len(w) > maxWordLength:
+            maxWordLength = len(w)
+    for w in sorted(words.items(), key=lambda x: x[1], reverse=True):
+        print(w[0] + (maxWordLength-len(w[0]))*' ' + '  ==>  ' + str(w[1]))
