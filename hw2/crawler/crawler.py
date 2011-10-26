@@ -24,7 +24,28 @@ def expandURL(URL, topLevel):
         if URL.startswith('/'):
             r2 = URL[1:]
         
-        return topLevel + '/' + URL
+        return r1 + '/' + r2
+
+def countWords(text):
+    """Return a dictionary of unique words to their counts in the supplied text.
+       For best results, strip the text of HTML tags (etc.) beforehand."""
+    words = {}
+
+    # Split the text on any non-word characters.
+    # Count numbers as words and allow apostrophes in possessives.
+    split = re.split('(?!\'s)\W+', text)
+
+    # Populate the dictionary.
+    for w in split:
+        lc = w.lower()
+        if lc == '':    # The split sometimes inserts empty strings at the start/end.
+            pass
+        elif lc in words:
+            words[lc] += 1
+        else:
+            words[lc] = 1
+    
+    return words
 
 def parsePage(resp):
     """Parse the page that response resp provides a connection to.
@@ -39,25 +60,26 @@ def parsePage(resp):
     bytes = len(contents)
     contents = contents.decode('utf-8')
 
-    # Remove everything in a comment.
-    contents = re.sub('<!--.*?-->', '', contents, 0, re.S)
+    # Remove everything in a comment and scripts.
+    contents = re.sub('<!--.*?-->|<script.*?</script>', '', contents, 0, re.S)
 
     # Remove all non-link text.
-    contents = re.sub('(?!</a>)<(?!a ).*?>', '', contents, 0)
+    contents = re.sub('(?!</a>)<(?!a ).*?>', '', contents)
 
     # Parse out the links and link text, then remove link tags.
+    # The only links returned are those in the same domain, and the text is '' for images.
     # NB: this pattern does not match links with a missing </a> tag.
     linkPattern = '<a .*?href="(.*?)".*?>(.*?)</a>'
     rawLinks = re.findall(linkPattern, contents, re.I)
     links = []
     topLevelURL = resp.geturl()
     for l in rawLinks:
-        fullURL = expandURL(l[0])
+        fullURL = expandURL(l[0], topLevelURL)
         if fullURL.startswith(topLevelURL):
-            links.append((fullURL, topLevelURL, l[1]))
-    contents = re.sub('<.*?>', '', contents, 0)
+            links.append((fullURL, l[1]))
+    contents = re.sub('<.*?>', '', contents)
 
-    words = {}
+    words = countWords(contents)
 
     return bytes, links, words
 
@@ -66,7 +88,8 @@ def crawlURL(URL):
        Return 3 values:
        - the number of bytes retrieved (-1 if an error is encountered)
        - a list of tuples containing the links harvested and their corresponding link text
-       - a dictionary containing all the unique words encountered and their word counts"""
+       - a dictionary containing all the unique words encountered and their word counts
+       On error, return -1, [], {}"""
     req = Request(URL)
     try:
         resp = urlopen(req)
