@@ -21,6 +21,10 @@ def expandURL(URL, topLevel):
         r2 = URL
         if topLevel.endswith('/'):
             r1 = topLevel[:len(topLevel)-1]
+        elif re.search('\.php$|\.html$|\.htm$', topLevel):
+            # If the top level domain ends with a filename, remove it.
+            s = topLevel.split('/')
+            r1 = re.sub('/'+s[len(s)-1]+'$', '', topLevel)
 
         if URL.startswith('/'):
             r2 = URL[1:]
@@ -67,7 +71,7 @@ def parsePage(resp):
     # Remove all non-link text.
     contents = re.sub('(?!</a>)<(?!a ).*?>', '', contents)
 
-    # Parse out the links and link text, then remove link tags.
+    # Parse out the links and link text (ignoring mailtos), then remove link tags.
     # The only links returned are those in the same domain, and the text is '' for images.
     # NB: this pattern does not match links with a missing </a> tag.
     linkPattern = '<a .*?href="(.*?)".*?>(.*?)</a>'
@@ -76,7 +80,7 @@ def parsePage(resp):
     topLevelURL = resp.geturl()
     for l in rawLinks:
         fullURL = expandURL(l[0], topLevelURL)
-        if fullURL.startswith(topLevelURL):
+        if fullURL.startswith(topLevelURL) and not re.search('mailto:\w+@\w+\.\w+', fullURL, re.I):
             links.append((fullURL, l[1]))
     contents = re.sub('<.*?>', '', contents)
 
@@ -134,12 +138,14 @@ def crawlSite(rootURL):
     bytes = newBytes
     links = newLinks
     words = newWords
+    crawledLinks.append(rootURL)
     
     # Crawl newly-returned URLs, making sure to keep track of which have been processed.
     for l in links:
-        sleep(sleepTime)
         URL = l[0]
         if URL not in crawledLinks:
+            sleep(sleepTime)
+            print('crawling ' + URL)
             crawledLinks.append(URL)
             newBytes, newLinks, newWords = crawlURL(URL)
             if newBytes >= 0:
