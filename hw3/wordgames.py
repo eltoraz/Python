@@ -7,6 +7,7 @@ Description:    Provides functions to:
                     - generate double word squares
 """
 import random
+import re
 
 # HELPER FUNCTIONS
 def readDict(file = 'ospd.txt'):
@@ -153,6 +154,7 @@ def generateWordFindPuzzle(dic, n, rows, cols):
     
     return '\n'.join([''.join(grid[i]) for i in range(rows)]), tuple(sorted(wordsplaced))
     
+# brute force; will be very slow for larger puzzles
 def findWords(dic, puzzle):
     """Use dictionary dic to find words in the puzzle"""
     grid = [[x for x in row] for row in puzzle.split()]
@@ -166,3 +168,41 @@ def findWords(dic, puzzle):
             wordsfound += [w.upper()]
 
     return tuple(sorted(set(wordsfound)))
+
+# brute force
+def generateDoubleWordSquare(dic, n):
+	"""Generate an n x n double word square using the specified dictionary"""
+	validwords = [word for word in dic if len(word) == n]
+	grid = ['' for i in range(n)]
+	
+	while True:
+		for i in range(n):
+			grid[i] = random.choice(validwords)
+		for i in range(n):
+			word = ''
+			for j in range(n):
+				word += grid[j][i]
+			if word not in validwords:
+				continue
+		return '\n'.join(grid)
+	
+	"""
+	dictionary = {}
+	for a in [chr(i) for i in range(ord('a'), ord('a')+1)]:
+		dictionary[a] = [word for word in validwords if word[0] == a]
+		
+	while True:
+		grid = [[' ' for i in range(n)] for j in range(n)]
+		acrostic = random.choice(validwords)
+		for a in acrostic:
+			for l in dictionary[a]:
+				
+	
+	for w in validwords:
+		nextPossibleWords = []
+		grid[0] = w
+		for n in validwords:
+			if len([word for word in validwords if re.match(w[0]+n[0], word)]):
+				nextPossibleWords += [n]
+		for i in range(1, n):
+	"""
