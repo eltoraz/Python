@@ -169,7 +169,7 @@ def findWords(dic, puzzle):
 
     return tuple(sorted(set(wordsfound)))
 
-# brute force
+# brute force, so n > 3 can be VERY slow
 def generateDoubleWordSquare(dic, n):
     """Generate an n x n double word square using the specified dictionary"""
     validwords = [word for word in dic if len(word) == n]
@@ -179,9 +179,12 @@ def generateDoubleWordSquare(dic, n):
         for i in range(n):
             grid[i] = random.choice(validwords)
         for i in range(n):
+            allWords = True
             word = ''
             for j in range(n):
                 word += grid[j][i]
             if word not in validwords:
-                continue
-        return '\n'.join(grid)
+                allWords = False
+                break
+        if allWords:
+            return '\n'.join(grid)
