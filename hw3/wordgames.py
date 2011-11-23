@@ -105,6 +105,17 @@ def placeWord(grid, w, pos, orientation):
     if orientation == 7:
         for i in range(len(w)):
             grid[row-i][col+i] = w[i]
+            
+def checkWord(grid, word):
+    """Check to see if the word is present in the grid, at any position or orientation."""
+    rows = len(grid)
+    cols = len(grid[0])
+    for i in range(rows*cols):
+        if len(getValidOrientations(word, grid, i)) > 0:
+            # don't need to iterate through all orientations, since it also checks letter-by-letter
+            #   in addition to blanks
+            return True
+    return False
     
 # HOMEWORK FUNCTION DEFINITIONS
 def generateWordFindPuzzle(dic, n, rows, cols):
@@ -134,17 +145,24 @@ def generateWordFindPuzzle(dic, n, rows, cols):
         placeWord(grid, w, pos, orientation)
         wordsplaced += [w]
         
+    # replace all blanks in the grid with random letters
     for r in range(len(grid)):
         for c in range(len(grid[0])):
             if grid[r][c] == '-':
                 grid[r][c] = random.choice(alpha)
     
-    return '\n'.join([''.join(grid[i]) for i in range(rows)]), tuple(wordsplaced)
+    return '\n'.join([''.join(grid[i]) for i in range(rows)]), tuple(sorted(wordsplaced))
     
+def findWords(dic, puzzle):
+    """Use dictionary dic to find words in the puzzle"""
+    grid = [[x for x in row] for row in puzzle.split()]
+    rows = len(grid)
+    cols = len(grid[0])
+    validwords = [word for word in dic if (len(word) <= rows or len(word) <= cols)]
+    wordsfound = []
 
+    for w in validwords:
+        if checkWord(grid, w.upper()):
+            wordsfound += [w.upper()]
 
-
-
-
-
-
+    return tuple(sorted(set(wordsfound)))
